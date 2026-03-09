@@ -1,8 +1,17 @@
-# For more information about build system see
-# https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html
-# The following five lines of boilerplate have to be in your project's
-# CMakeLists in this exact order for cmake to work correctly
-cmake_minimum_required(VERSION 3.5)
-include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-add_compile_options("-Wno-attributes")
-project(lvgl_porting)
+set(SRCS_DIR "src")
+
+file(GLOB_RECURSE CPP_SRCS "${SRCS_DIR}/*.cpp")
+file(GLOB_RECURSE C_SRCS "${SRCS_DIR}/*.c")
+
+idf_component_register(
+    SRCS ${C_SRCS} ${CPP_SRCS}
+    INCLUDE_DIRS ${SRCS_DIR}
+    REQUIRES driver esp_lcd
+)
+
+target_compile_options(${COMPONENT_LIB}
+    PUBLIC
+        -Wno-missing-field-initializers
+    PRIVATE
+        $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++17>
+)
